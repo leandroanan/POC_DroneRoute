@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import Chessboard from 'chessboardjsx';
 import useCalculateRoute from "../hooks/useCalculateRoute";
+import { Input, Button, Card, Typography } from 'antd';
 
 function ChessboardDroneRoute() {
     const [origin, setOrigin] = useState('');
     const [collection, setCollection] = useState('');
     const [destination, setDestination] = useState('');
     const [movementTimes, setMovementTimes] = useState({});
+    const [showResults, setShowResults] = useState(false);
+    const { Title, Text } = Typography;
 
     useEffect(() => {
         // @ts-ignore
@@ -26,39 +28,58 @@ function ChessboardDroneRoute() {
         fetchMovementTimes();
     }, []);
 
-    //Using hook to calculete the route
     const { path, totalTime } = useCalculateRoute(origin, collection, destination, movementTimes);
+
+    const handleCalculateClick = () => {
+        //setShouldCalculate(true);
+        setShowResults(true);
+        setOrigin("");
+        setCollection("");
+        setDestination("");
+    };
+
+    const handleDisableResults = () => {
+        setShowResults(false);
+    }
 
     return (
         <div>
-            <input
-                type="text"
-                placeholder="Origem (A1-H8)"
-                value={origin}
-                onChange={(e) => setOrigin(e.target.value.toUpperCase())}
+            <Input placeholder="Origem (A1-H8)"
+                   type="text"
+                   size={"small"}
+                   value={origin}
+                   onChange={(e) => setOrigin(e.target.value.toUpperCase())}
+                   style={{ width: '400px', marginBottom: '10px', display: 'block' }}
+                   onClick={handleDisableResults}
             />
-            <input
-                type="text"
-                placeholder="Coleta (A1-H8)"
-                value={collection}
-                onChange={(e) => setCollection(e.target.value.toUpperCase())}
+            <Input placeholder="Coleta (A1-H8)"
+                   type="text"
+                   size={"small"}
+                   value={collection}
+                   onChange={(e) => setCollection(e.target.value.toUpperCase())}
+                   style={{ width: '400px', marginBottom: '10px', display: 'block' }}
+                   onClick={handleDisableResults}
             />
-            <input
-                type="text"
-                placeholder="Destino (A1-H8)"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value.toUpperCase())}
+            <Input placeholder="Destino (A1-H8)"
+                   type="text"
+                   size={"small"}
+                   value={destination}
+                   onChange={(e) => setDestination(e.target.value.toUpperCase())}
+                   style={{ width: '400px', marginBottom: '10px', display: 'block' }}
+                   onClick={handleDisableResults}
             />
-            <Chessboard
-                width={400}
-                position={{}}
-                boardStyle={{
-                    borderRadius: '5px',
-                    boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
-                }}
-            />
-            <p>Rota mais rápida: {path.join(' -> ')}</p>
-            <p>Tempo total: {totalTime} minutos</p>
+            <Button onClick={handleCalculateClick} type="primary" style={{ width: '400px', marginBottom: '20px', display: 'block' }}>
+                Calcular Rota
+            </Button>
+            {showResults && (
+                <Card title="Route Results" style={{ width: 400 }}>
+                    <Text>The set delivery will have the route: <strong>{path.join('-')}</strong></Text>
+                    <br />
+                    <Text>, and will take <strong>{totalTime} seconds to be delivered as fast as possible.
+                    </strong></Text>
+                    <br />
+                </Card>
+            )}
         </div>
     );
 }
