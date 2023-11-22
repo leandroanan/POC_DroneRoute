@@ -23,14 +23,13 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  maxWidth: '400px';
   padding-top: 20px;
   min-width: 320px;
   min-height: 100vh;
   overflow-y: hidden;
+  display: block;
+  margin-left: 450px;
 }
 
 h1 {
@@ -67,5 +66,16 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+    overflow-y: hidden;
   }
 }
