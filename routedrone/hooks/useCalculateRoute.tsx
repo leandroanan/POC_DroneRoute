@@ -32,6 +32,8 @@ const useCalculateRoute = (origin, collection, destination, movementTimes) => {
                 }
             }
 
+            totalTime = totalTime * 60;
+
             return { path, totalTime };
         };
 
