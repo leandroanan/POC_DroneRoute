@@ -17,6 +17,16 @@ function ChessboardDroneRoute() {
     const [originErrorMsg, setOriginErrorMsg] = useState("");
     const [collectionErrorMsg, setCollectionErrorMsg] = useState("");
     const [destinationErrorMsg, setDestinationErrorMsg] = useState("");
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowWidth(window.innerWidth);
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         // @ts-ignore
@@ -37,7 +47,7 @@ function ChessboardDroneRoute() {
     }, []);
 
     const formatDeliveryMessage = () => {
-        return `From ${origin}, picking-up at ${collection} to ${destination} in ${totalTime.toFixed(2)} seconds`;
+        return `From ${origin}, picking-up at ${collection} to ${destination} in ${totalTime.toFixed(0)} seconds`;
     };
 
     const { path, totalTime } = useCalculateRoute(origin, collection, destination, movementTimes);
@@ -120,6 +130,9 @@ function ChessboardDroneRoute() {
         <div>
             <Form form={form}>
                 <Form.Item
+                    label="Origin"
+                    labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
+                    wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={originError ? "error" : ""}
                     help={originError ? "" : ""}
                 >
@@ -130,13 +143,16 @@ function ChessboardDroneRoute() {
                         size="small"
                         value={origin}
                         onChange={(e) => handleChange(e, "origin")}
-                        style={{ width: '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
+                        style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
                         className={originError ? "error-placeholder" : ""}
                         onClick={handleDisableResults}
                     />
                 </Form.Item>
 
                 <Form.Item
+                    label="Pickup"
+                    labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
+                    wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={collectionError ? "error" : ""}
                     help={collectionError ? "" : ""}
                 >
@@ -147,13 +163,16 @@ function ChessboardDroneRoute() {
                         size="small"
                         value={collection}
                         onChange={(e) => handleChange(e, "collection")}
-                        style={{ width: '400px', display: 'block', background: 'floralwhite', borderColor: collectionError ? "red" : "" }}
+                        style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
                         className={collectionError ? "error-placeholder" : ""}
                         onClick={handleDisableResults}
                     />
                 </Form.Item>
 
                 <Form.Item
+                    label="Destination"
+                    labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
+                    wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={destinationError ? "error" : ""}
                     help={destinationError ? "" : ""}
                 >
@@ -164,16 +183,16 @@ function ChessboardDroneRoute() {
                         size="small"
                         value={destination}
                         onChange={(e) => handleChange(e, "destination")}
-                        style={{ width: '400px', display: 'block', background: 'floralwhite', borderColor: destinationError ? "red" : "" }}
+                        style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
                         className={destinationError ? "error-placeholder" : ""}
                         onClick={handleDisableResults}
                     />
                 </Form.Item>
-
+                <div>
                 <Button
                     onClick={handleCalculateClick}
                     type="primary"
-                    style={{ width: '400px', marginBottom: '10px', display: 'block' }}
+                    style={{ width: '180px', marginBottom: '10px'}}
                 >
                     Calculate fastest route!
                 </Button>
@@ -183,7 +202,7 @@ function ChessboardDroneRoute() {
                     <Card title="Route Results" style={{width: '100%', marginBottom: '10px', maxWidth: '400px', background: 'floralwhite'}}>
                         <Text>The set delivery will have the route: <strong>{path.join('-')}</strong></Text>
                         <br/>
-                        <Text>, and will take <strong>{totalTime.toFixed(2)} seconds</strong> to be delivered as fast as
+                        <Text>, and will take <strong>{totalTime.toFixed(0)} seconds</strong> to be delivered as fast as
                             possible.</Text>
                     </Card>
                     <Card title="Last deliverieas" style={{width: '100%', maxWidth: '400px', background: 'floralwhite'}}>
@@ -195,6 +214,7 @@ function ChessboardDroneRoute() {
                     </Card>
                     </>
                 )}
+                </div>
             </Form>
         </div>
     );
