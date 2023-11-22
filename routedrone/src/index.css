@@ -23,13 +23,12 @@ a:hover {
 }
 
 body {
-  maxWidth: '400px';
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   padding-top: 20px;
-  min-width: 320px;
-  min-height: 100vh;
-  overflow-y: hidden;
-  display: block;
-  margin-left: 450px;
+  overflow-y: auto;
 }
 
 h1 {
@@ -69,13 +68,14 @@ button:focus-visible {
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   body {
-    margin: 0;
     display: flex;
+    margin-left: 0px;
+    width: 100%;
     align-items: flex-start;
+    align-content: center;
     justify-content: center;
     padding-top: 20px;
-    overflow-y: hidden;
   }
 }
