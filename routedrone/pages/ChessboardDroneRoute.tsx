@@ -5,12 +5,18 @@ import { Input, Button, Card, Typography, Form } from 'antd';
 function ChessboardDroneRoute() {
     const [form] = Form.useForm();
     const [origin, setOrigin] = useState('');
+    const [originError, setOriginError] = useState(false);
     const [collection, setCollection] = useState('');
+    const [collectionError, setCollectionError] = useState(false);
     const [destination, setDestination] = useState('');
+    const [destinationError, setDestinationError] = useState(false);
     const [movementTimes, setMovementTimes] = useState({});
     const [showResults, setShowResults] = useState(false);
     const {Text } = Typography;
     const [delivery, setDelivery] = useState([]);
+    const [originErrorMsg, setOriginErrorMsg] = useState("");
+    const [collectionErrorMsg, setCollectionErrorMsg] = useState("");
+    const [destinationErrorMsg, setDestinationErrorMsg] = useState("");
 
     useEffect(() => {
         // @ts-ignore
@@ -30,18 +36,80 @@ function ChessboardDroneRoute() {
         fetchMovementTimes();
     }, []);
 
-    const formatString = () => {
-        return `– From ${origin}, picking-up at ${collection} to ${destination} in ${totalTime.toFixed(2)} seconds`;
+    const formatDeliveryMessage = () => {
+        return `From ${origin}, picking-up at ${collection} to ${destination} in ${totalTime.toFixed(2)} seconds`;
     };
 
     const { path, totalTime } = useCalculateRoute(origin, collection, destination, movementTimes);
 
+    const handleChange = (e, fieldName) => {
+        const value = e.target.value.toUpperCase();
+        const inputValue = e.target.value.toUpperCase();
+
+        if (/^[A-H]?[1-8]?$/.test(inputValue) == false) {
+            if (fieldName === "origin") {
+                setOrigin("");
+                setOriginError(true);
+                setOriginErrorMsg("Invalid position, type (A1-H8)");
+            } else if (fieldName === "collection") {
+                setCollection("");
+                setCollectionError(true);
+                setCollectionErrorMsg("Invalid position, type (A1-H8)");
+            } else if (fieldName === "destination") {
+                setDestination("");
+                setDestinationError(true);
+                setDestinationErrorMsg("Invalid position, type (A1-H8)");
+            }
+            return;
+        }
+
+        if (fieldName === "origin") {
+            setOrigin(value);
+            setOriginError(!value);
+            setOriginErrorMsg("Origin is mandatory")
+        } else if (fieldName === "collection") {
+            setCollection(value);
+            setCollectionError(!value);
+            setCollectionErrorMsg("Pickup is mandatory");
+        } else if (fieldName === "destination") {
+            setDestination(value);
+            setDestinationError(!value);
+            setDestinationErrorMsg("Destination is mandatory");
+        }
+    };
+
+    const handleValidationClick = () => {
+        let ret = true;
+
+        if (!origin) {
+            setOriginError(true);
+            setOriginErrorMsg("Origin is mandatory")
+            ret = false;
+        }
+
+        if (!collection) {
+            setCollectionError(true);
+            setCollectionErrorMsg("Pickup is mandatory");
+            ret = false;
+        }
+
+        if (!collection) {
+            setDestinationError(true);
+            setDestinationErrorMsg("Destination is mandatory");
+            ret = false;
+        }
+
+        return ret;
+    };
+
     const handleCalculateClick = () => {
-        setDelivery([formatString(), ...delivery]);
-        setShowResults(true);
-        setOrigin("");
-        setCollection("");
-        setDestination("");
+        if (handleValidationClick()) {
+            setDelivery([formatDeliveryMessage(), ...delivery]);
+            setShowResults(true);
+            setOrigin("");
+            setCollection("");
+            setDestination("");
+        }
     };
 
     const handleDisableResults = () => {
@@ -52,48 +120,52 @@ function ChessboardDroneRoute() {
         <div>
             <Form form={form}>
                 <Form.Item
-                    rules={[
-                        {
-                            required: true,
-                            message: "Origin is mandatory",
-                        },
-                    ]}
+                    validateStatus={originError ? "error" : ""}
+                    help={originError ? "" : ""}
                 >
                     <Input
-                        placeholder="Origin (A1-H8)"
+                        placeholder={originError ? originErrorMsg : "Origin (A1-H8)"}
                         type="text"
+                        maxLength={2}
                         size="small"
                         value={origin}
-                        onChange={(e) => setOrigin(e.target.value.toUpperCase())}
-                        style={{ width: '400px', display: 'block', background: 'floralwhite' }}
+                        onChange={(e) => handleChange(e, "origin")}
+                        style={{ width: '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
+                        className={originError ? "error-placeholder" : ""}
                         onClick={handleDisableResults}
                     />
                 </Form.Item>
 
                 <Form.Item
-
+                    validateStatus={collectionError ? "error" : ""}
+                    help={collectionError ? "" : ""}
                 >
                     <Input
-                        placeholder="Pickup (A1-H8)"
+                        placeholder={collectionError ? collectionErrorMsg : "Pickup (A1-H8)"}
                         type="text"
+                        maxLength={2}
                         size="small"
                         value={collection}
-                        onChange={(e) => setCollection(e.target.value.toUpperCase())}
-                        style={{ width: '400px', display: 'block', background: 'floralwhite' }}
+                        onChange={(e) => handleChange(e, "collection")}
+                        style={{ width: '400px', display: 'block', background: 'floralwhite', borderColor: collectionError ? "red" : "" }}
+                        className={collectionError ? "error-placeholder" : ""}
                         onClick={handleDisableResults}
                     />
                 </Form.Item>
 
                 <Form.Item
-
+                    validateStatus={destinationError ? "error" : ""}
+                    help={destinationError ? "" : ""}
                 >
                     <Input
-                        placeholder="Destination (A1-H8)"
+                        placeholder={destinationError ? destinationErrorMsg : "Destination (A1-H8)"}
                         type="text"
+                        maxLength={2}
                         size="small"
                         value={destination}
-                        onChange={(e) => setDestination(e.target.value.toUpperCase())}
-                        style={{ width: '400px', marginBottom: '10px', display: 'block', background: 'floralwhite' }}
+                        onChange={(e) => handleChange(e, "destination")}
+                        style={{ width: '400px', display: 'block', background: 'floralwhite', borderColor: destinationError ? "red" : "" }}
+                        className={destinationError ? "error-placeholder" : ""}
                         onClick={handleDisableResults}
                     />
                 </Form.Item>
