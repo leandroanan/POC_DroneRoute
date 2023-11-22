@@ -40,3 +40,8 @@
 .read-the-docs {
   color: black;
 }
+
+.error-placeholder::placeholder {
+  color: lightcoral;
+}
+
