@@ -154,7 +154,8 @@ function ChessboardDroneRoute() {
             genericNotification("warning");
         }
 
-        if (origin === collection && collection === destination) {
+        if (origin === collection && collection === destination
+        && origin != ""  && collection != ""  && destination != "") {
             ret = false;
             genericNotification("error");
         }
@@ -191,7 +192,7 @@ function ChessboardDroneRoute() {
                         placeholder={originError ? originErrorMsg : "Type the origin (A1-H8)"}
                         type="text"
                         maxLength={2}
-                        size="small"
+                        size="middle"
                         value={origin}
                         onChange={(e) => handleChange(e, "origin")}
                         style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
@@ -211,7 +212,7 @@ function ChessboardDroneRoute() {
                         placeholder={collectionError ? collectionErrorMsg : "Type the pickup (A1-H8)"}
                         type="text"
                         maxLength={2}
-                        size="small"
+                        size="middle"
                         value={collection}
                         onChange={(e) => handleChange(e, "collection")}
                         style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
@@ -231,7 +232,7 @@ function ChessboardDroneRoute() {
                         placeholder={destinationError ? destinationErrorMsg : "Type the destination (A1-H8)"}
                         type="text"
                         maxLength={2}
-                        size="small"
+                        size="middle"
                         value={destination}
                         onChange={(e) => handleChange(e, "destination")}
                         style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
