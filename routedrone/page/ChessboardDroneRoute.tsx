@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import useCalculateRoute from "../hook/useCalculateRoute";
-import { Input, Button, Card, Typography, Form } from 'antd';
+import { Input, Button, Card, Typography, Form, notification } from 'antd';
 
 function ChessboardDroneRoute() {
     const [form] = Form.useForm();
@@ -46,6 +46,31 @@ function ChessboardDroneRoute() {
         fetchMovementTimes();
     }, []);
 
+    const genericNotification = (typeMessage) => {
+        if (typeMessage == "success") {
+            notification.success({
+                message: "Sucess",
+                description:
+                    "Route calculated successfully",
+                placement: "bottomRight",
+            });
+        } else if (typeMessage == "warning") {
+            notification.warning({
+                message: "Warning",
+                description:
+                    "Please correct the route information",
+                placement: "bottomRight",
+            });
+        } else if (typeMessage == "error") {
+            notification.error({
+                message: "Error",
+                description:
+                    "Sorry, something went wrong",
+                placement: "bottomRight",
+            });
+        }
+    };
+
     const formatDeliveryMessage = () => {
         return `From ${origin}, picking-up at ${collection} to ${destination} in ${totalTime.toFixed(0)} seconds`;
     };
@@ -86,6 +111,7 @@ function ChessboardDroneRoute() {
             setDestinationError(!value);
             setDestinationErrorMsg("Destination is mandatory");
         }
+
     };
 
     const handleValidationClick = () => {
@@ -124,6 +150,15 @@ function ChessboardDroneRoute() {
             ret = false;
         }
 
+        if (!ret) {
+            genericNotification("warning");
+        }
+
+        if (origin === collection && collection === destination) {
+            ret = false;
+            genericNotification("error");
+        }
+
         return ret;
     };
 
@@ -134,6 +169,7 @@ function ChessboardDroneRoute() {
             setOrigin("");
             setCollection("");
             setDestination("");
+            genericNotification("success");
         }
     };
 
@@ -165,7 +201,7 @@ function ChessboardDroneRoute() {
                 </Form.Item>
 
                 <Form.Item
-                    label="Object pick-up"
+                    label="Pickup"
                     labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
                     wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={collectionError ? "error" : ""}
