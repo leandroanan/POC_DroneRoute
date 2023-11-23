@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import useCalculateRoute from "../hooks/useCalculateRoute";
+import useCalculateRoute from "../hook/useCalculateRoute";
 import { Input, Button, Card, Typography, Form } from 'antd';
 
 function ChessboardDroneRoute() {
@@ -95,17 +95,32 @@ function ChessboardDroneRoute() {
             setOriginError(true);
             setOriginErrorMsg("Origin is mandatory")
             ret = false;
+        } else if (origin.length < 2) {
+            setOrigin("");
+            setOriginError(true);
+            setOriginErrorMsg("Type two characters between (A1-H8)");
+            ret = false;
         }
 
         if (!collection) {
             setCollectionError(true);
             setCollectionErrorMsg("Pickup is mandatory");
             ret = false;
+        } else if (collection.length < 2) {
+            setCollection("");
+            setCollectionError(true);
+            setCollectionErrorMsg("Type two characters between (A1-H8)");
+            ret = false;
         }
 
-        if (!collection) {
+        if (!destination) {
             setDestinationError(true);
             setDestinationErrorMsg("Destination is mandatory");
+            ret = false;
+        } else if (destination.length < 2) {
+            setDestination("");
+            setDestinationError(true);
+            setDestinationErrorMsg("Type two characters between (A1-H8)");
             ret = false;
         }
 
@@ -130,14 +145,14 @@ function ChessboardDroneRoute() {
         <div>
             <Form form={form}>
                 <Form.Item
-                    label="Origin"
+                    label="Drone start"
                     labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
                     wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={originError ? "error" : ""}
                     help={originError ? "" : ""}
                 >
                     <Input
-                        placeholder={originError ? originErrorMsg : "Origin (A1-H8)"}
+                        placeholder={originError ? originErrorMsg : "Type the origin (A1-H8)"}
                         type="text"
                         maxLength={2}
                         size="small"
@@ -150,14 +165,14 @@ function ChessboardDroneRoute() {
                 </Form.Item>
 
                 <Form.Item
-                    label="Pickup"
+                    label="Object pick-up"
                     labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
                     wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={collectionError ? "error" : ""}
                     help={collectionError ? "" : ""}
                 >
                     <Input
-                        placeholder={collectionError ? collectionErrorMsg : "Pickup (A1-H8)"}
+                        placeholder={collectionError ? collectionErrorMsg : "Type the pickup (A1-H8)"}
                         type="text"
                         maxLength={2}
                         size="small"
@@ -177,7 +192,7 @@ function ChessboardDroneRoute() {
                     help={destinationError ? "" : ""}
                 >
                     <Input
-                        placeholder={destinationError ? destinationErrorMsg : "Destination (A1-H8)"}
+                        placeholder={destinationError ? destinationErrorMsg : "Type the destination (A1-H8)"}
                         type="text"
                         maxLength={2}
                         size="small"
@@ -199,13 +214,17 @@ function ChessboardDroneRoute() {
 
                 {showResults && (
                     <>
-                    <Card title="Route Results" style={{width: '100%', marginBottom: '10px', maxWidth: '400px', background: 'floralwhite'}}>
-                        <Text>The set delivery will have the route: <strong>{path.join('-')}</strong></Text>
-                        <br/>
-                        <Text>, and will take <strong>{totalTime.toFixed(0)} seconds</strong> to be delivered as fast as
-                            possible.</Text>
+                        <Card
+                            title="Route Results"
+                            headStyle={{ textAlign: 'center', background: 'floralwhite' }}
+                            style={{ width: '100%', marginBottom: '10px', background: 'floralwhite', textAlign: 'left' }}
+                        >
+                            <Text style={{ textAlign: 'left' }}>
+                                The set delivery will have the route: <strong>{path.join('-')}</strong>.<br/>
+                                It will take <strong>{totalTime.toFixed(0)} seconds </strong> </Text>
+                            <Text>to be delivered as fast as possible.</Text>
                     </Card>
-                    <Card title="Last deliverieas" style={{width: '100%', maxWidth: '400px', background: 'floralwhite'}}>
+                    <Card title="Last deliveries" style={{width: '100%', background: 'floralwhite'}}>
                         <ul>
                             {delivery.slice(0, 10).map((item, index) => (
                                 <li key={index}>{item}</li>
