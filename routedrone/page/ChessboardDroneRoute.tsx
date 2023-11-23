@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import useCalculateRoute from "../hook/useCalculateRoute";
-import { Input, Button, Card, Typography, Form, notification } from 'antd';
+import notificationFactory from "../utils/notificationFactory";
+import { validateOrigin, validateCollection, validateDestination } from "../utils/validationStrategies";
+import { Input, Button, Card, Typography, Form } from 'antd';
 
 function ChessboardDroneRoute() {
     const [form] = Form.useForm();
@@ -46,31 +48,6 @@ function ChessboardDroneRoute() {
         fetchMovementTimes();
     }, []);
 
-    const genericNotification = (typeMessage) => {
-        if (typeMessage == "success") {
-            notification.success({
-                message: "Sucess",
-                description:
-                    "Route calculated successfully",
-                placement: "bottomRight",
-            });
-        } else if (typeMessage == "warning") {
-            notification.warning({
-                message: "Warning",
-                description:
-                    "Please correct the route information",
-                placement: "bottomRight",
-            });
-        } else if (typeMessage == "error") {
-            notification.error({
-                message: "Error",
-                description:
-                    "Sorry, something went wrong",
-                placement: "bottomRight",
-            });
-        }
-    };
-
     const formatDeliveryMessage = () => {
         return `From ${origin}, picking-up at ${collection} to ${destination} in ${totalTime.toFixed(0)} seconds`;
     };
@@ -115,52 +92,38 @@ function ChessboardDroneRoute() {
     };
 
     const handleValidationClick = () => {
-        let ret = true;
+        let isValid = true;
 
-        if (!origin) {
-            setOriginError(true);
-            setOriginErrorMsg("Origin is mandatory")
-            ret = false;
-        } else if (origin.length < 2) {
-            setOrigin("");
-            setOriginError(true);
-            setOriginErrorMsg("Type two characters between (A1-H8)");
-            ret = false;
-        }
+        const originValidation = validateOrigin(origin);
+        setOrigin(originValidation.error ? "" : origin)
+        setOriginError(originValidation.error);
+        setOriginErrorMsg(originValidation.message);
+        isValid = isValid && !originValidation.error;
 
-        if (!collection) {
-            setCollectionError(true);
-            setCollectionErrorMsg("Pickup is mandatory");
-            ret = false;
-        } else if (collection.length < 2) {
-            setCollection("");
-            setCollectionError(true);
-            setCollectionErrorMsg("Type two characters between (A1-H8)");
-            ret = false;
-        }
+        const collectionValidation = validateCollection(collection);
+        setCollection(collectionValidation.error ? "" : collection)
+        setCollectionError(collectionValidation.error);
+        setCollectionErrorMsg(collectionValidation.message);
+        isValid = isValid && !collectionValidation.error;
 
-        if (!destination) {
-            setDestinationError(true);
-            setDestinationErrorMsg("Destination is mandatory");
-            ret = false;
-        } else if (destination.length < 2) {
-            setDestination("");
-            setDestinationError(true);
-            setDestinationErrorMsg("Type two characters between (A1-H8)");
-            ret = false;
-        }
+        const destinationValidation = validateDestination(destination);
+        setDestination(destinationValidation.error ? "" : destination)
+        setDestinationError(destinationValidation.error);
+        setDestinationErrorMsg(destinationValidation.message);
+        isValid = isValid && !destinationValidation.error;
 
-        if (!ret) {
-            genericNotification("warning");
+        if (!isValid) {
+            notificationFactory.warning("Please correct the route information");
+            return;
         }
 
         if (origin === collection && collection === destination
         && origin != ""  && collection != ""  && destination != "") {
-            ret = false;
-            genericNotification("error");
+            isValid = false;
+            notificationFactory.error("Sorry, something went wrong");
         }
 
-        return ret;
+        return isValid;
     };
 
     const handleCalculateClick = () => {
@@ -170,7 +133,7 @@ function ChessboardDroneRoute() {
             setOrigin("");
             setCollection("");
             setDestination("");
-            genericNotification("success");
+            notificationFactory.success("Route calculated successfully");
         }
     };
 
