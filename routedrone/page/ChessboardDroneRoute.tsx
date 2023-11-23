@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import useCalculateRoute from "../hook/useCalculateRoute";
+import notificationFactory from "../utils/notificationFactory";
+import { validateOrigin, validateCollection, validateDestination } from "../utils/validationStrategies";
 import { Input, Button, Card, Typography, Form } from 'antd';
 
 function ChessboardDroneRoute() {
@@ -86,45 +88,42 @@ function ChessboardDroneRoute() {
             setDestinationError(!value);
             setDestinationErrorMsg("Destination is mandatory");
         }
+
     };
 
     const handleValidationClick = () => {
-        let ret = true;
+        let isValid = true;
 
-        if (!origin) {
-            setOriginError(true);
-            setOriginErrorMsg("Origin is mandatory")
-            ret = false;
-        } else if (origin.length < 2) {
-            setOrigin("");
-            setOriginError(true);
-            setOriginErrorMsg("Type two characters between (A1-H8)");
-            ret = false;
+        const originValidation = validateOrigin(origin);
+        setOrigin(originValidation.error ? "" : origin)
+        setOriginError(originValidation.error);
+        setOriginErrorMsg(originValidation.message);
+        isValid = isValid && !originValidation.error;
+
+        const collectionValidation = validateCollection(collection);
+        setCollection(collectionValidation.error ? "" : collection)
+        setCollectionError(collectionValidation.error);
+        setCollectionErrorMsg(collectionValidation.message);
+        isValid = isValid && !collectionValidation.error;
+
+        const destinationValidation = validateDestination(destination);
+        setDestination(destinationValidation.error ? "" : destination)
+        setDestinationError(destinationValidation.error);
+        setDestinationErrorMsg(destinationValidation.message);
+        isValid = isValid && !destinationValidation.error;
+
+        if (!isValid) {
+            notificationFactory.warning("Please correct the route information");
+            return;
         }
 
-        if (!collection) {
-            setCollectionError(true);
-            setCollectionErrorMsg("Pickup is mandatory");
-            ret = false;
-        } else if (collection.length < 2) {
-            setCollection("");
-            setCollectionError(true);
-            setCollectionErrorMsg("Type two characters between (A1-H8)");
-            ret = false;
+        if (origin === collection && collection === destination
+        && origin != ""  && collection != ""  && destination != "") {
+            isValid = false;
+            notificationFactory.error("Sorry, something went wrong");
         }
 
-        if (!destination) {
-            setDestinationError(true);
-            setDestinationErrorMsg("Destination is mandatory");
-            ret = false;
-        } else if (destination.length < 2) {
-            setDestination("");
-            setDestinationError(true);
-            setDestinationErrorMsg("Type two characters between (A1-H8)");
-            ret = false;
-        }
-
-        return ret;
+        return isValid;
     };
 
     const handleCalculateClick = () => {
@@ -134,6 +133,7 @@ function ChessboardDroneRoute() {
             setOrigin("");
             setCollection("");
             setDestination("");
+            notificationFactory.success("Route calculated successfully");
         }
     };
 
@@ -155,7 +155,7 @@ function ChessboardDroneRoute() {
                         placeholder={originError ? originErrorMsg : "Type the origin (A1-H8)"}
                         type="text"
                         maxLength={2}
-                        size="small"
+                        size="middle"
                         value={origin}
                         onChange={(e) => handleChange(e, "origin")}
                         style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
@@ -165,7 +165,7 @@ function ChessboardDroneRoute() {
                 </Form.Item>
 
                 <Form.Item
-                    label="Object pick-up"
+                    label="Pickup"
                     labelCol={{ span: windowWidth <= 700 ? 24 : 4 }}
                     wrapperCol={{ span: windowWidth <= 700 ? 24 : 20 }}
                     validateStatus={collectionError ? "error" : ""}
@@ -175,7 +175,7 @@ function ChessboardDroneRoute() {
                         placeholder={collectionError ? collectionErrorMsg : "Type the pickup (A1-H8)"}
                         type="text"
                         maxLength={2}
-                        size="small"
+                        size="middle"
                         value={collection}
                         onChange={(e) => handleChange(e, "collection")}
                         style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
@@ -195,7 +195,7 @@ function ChessboardDroneRoute() {
                         placeholder={destinationError ? destinationErrorMsg : "Type the destination (A1-H8)"}
                         type="text"
                         maxLength={2}
-                        size="small"
+                        size="middle"
                         value={destination}
                         onChange={(e) => handleChange(e, "destination")}
                         style={{ width: windowWidth <= 700 ? '100%' : '400px', display: 'block', background: 'floralwhite', borderColor: originError ? "red" : "" }}
