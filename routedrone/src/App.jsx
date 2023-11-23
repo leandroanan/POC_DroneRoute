@@ -1,5 +1,5 @@
 import './App.css'
-import ChessboardDroneRoute from "../pages/ChessboardDroneRoute.tsx";
+import ChessboardDroneRoute from "../page/ChessboardDroneRoute.tsx";
 
 function App() {
 
