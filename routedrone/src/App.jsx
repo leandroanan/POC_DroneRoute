@@ -1,12 +1,12 @@
 import './App.css'
-import ChessboardDroneRoute from "../page/ChessboardDroneRoute.tsx";
+import DroneRoutePage from "../page/DroneRoutePage.tsx";
 
 function App() {
 
   return (
     <>
       <div>
-        <ChessboardDroneRoute/>
+        <DroneRoutePage/>
       </div>
     </>
   )

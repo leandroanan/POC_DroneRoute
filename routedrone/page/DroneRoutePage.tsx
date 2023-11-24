@@ -4,7 +4,7 @@ import notificationFactory from "../utils/notificationFactory";
 import { validateOrigin, validateCollection, validateDestination } from "../utils/validationStrategies";
 import { Input, Button, Card, Typography, Form } from 'antd';
 
-function ChessboardDroneRoute() {
+function DroneRoutePage() {
     const [form] = Form.useForm();
     const [origin, setOrigin] = useState('');
     const [originError, setOriginError] = useState(false);
@@ -143,6 +143,9 @@ function ChessboardDroneRoute() {
 
     return (
         <div>
+            <h3>
+                Input the coordinates:
+            </h3>
             <Form form={form}>
                 <Form.Item
                     label="Drone start"
@@ -239,4 +242,4 @@ function ChessboardDroneRoute() {
     );
 }
 
-export default ChessboardDroneRoute;
+export default DroneRoutePage;
