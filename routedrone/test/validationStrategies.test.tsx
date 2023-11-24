@@ -15,7 +15,6 @@ describe('Validation Functions', () => {
         });
     });
 
-    // Repita a estrutura semelhante para validateCollection e validateDestination
     describe('validateCollection', () => {
         it('returns an error when collection is empty', () => {
             expect(validateCollection('')).toEqual({ error: true, message: "Pickup is mandatory" });
