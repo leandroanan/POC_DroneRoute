@@ -1,7 +1,7 @@
 import {renderHook} from "@testing-library/react";
 import useCalculateRoute from "../hook/useCalculateRoute";
 
-// eslint-disable-next-line no-undef
+
 describe('useCalculateRoute', () => {
     it('calculates the correct route and total time', () => {
         const origin = 'A1';
@@ -21,7 +21,6 @@ describe('useCalculateRoute', () => {
         const { result } = renderHook(() => useCalculateRoute(origin, collection, destination, movementTimes));
 
         expect(result.current.path).toEqual(['A1', 'B2', 'C3']);
-        // eslint-disable-next-line no-undef
         expect(result.current.totalTime).toBe(180);
     });
 });

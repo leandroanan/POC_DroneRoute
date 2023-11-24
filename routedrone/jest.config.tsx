@@ -4,7 +4,4 @@ module.exports = {
     },
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     testEnvironment: 'jsdom',
-    presets: ["@babel/preset-react"],
-    plugins: ["@babel/plugin-syntax-jsx"],
-    setupFiles: ['<rootDir>/jest.setup.js']
 };
